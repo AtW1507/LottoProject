@@ -6,5 +6,6 @@ public class LottoGameApplication {
         LottoNumberGenerator lottoNumberGenerator = new LottoNumberGenerator();
         double random = lottoNumberGenerator.generateRandomNumber();
         System.out.println(random);
+        System.out.println("end");
     }
 }
