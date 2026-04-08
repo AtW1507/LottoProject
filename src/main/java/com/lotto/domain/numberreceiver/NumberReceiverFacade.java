@@ -1,7 +1,14 @@
 package com.lotto.domain.numberreceiver;
 
+import com.lotto.domain.numberreceiver.dto.InputNumberResultDto;
+import com.lotto.domain.numberreceiver.dto.TicketDto;
+import lombok.AllArgsConstructor;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /*
  *
@@ -13,25 +20,37 @@ import java.util.Set;
  * klient dostaje informacje o swoim unikalnum indetyfikatorzee losowania
  *
  * */
-
+@AllArgsConstructor
 class NumberReceiverFacade {
 
-    public String inputNumber(Set<Integer> numbersFromUser){
-        List<Integer> filteredNumbers = filterAllNumbersInOfRange(numbersFromUser);
-        if (areAllNumbersInRange(filteredNumbers)){
-            return "success";
+    private final NumberValidator validator;
+    private final NumberReceiverRepository repository;
+    private Clock clock;
+
+    public InputNumberResultDto inputNumber(Set<Integer> numbersFromUser) {
+        boolean areAllNumbersInRange = validator.areAllNumbersInRange(numbersFromUser);
+        if (areAllNumbersInRange) {
+            String tickedId = UUID.randomUUID().toString();
+            LocalDateTime drawDate = LocalDateTime.now(clock);
+            Ticket savedTicket = repository.save(new Ticket(tickedId, drawDate, numbersFromUser));
+            return InputNumberResultDto.builder()
+                    .drawDate(savedTicket.drawDate())
+                    .ticketId(savedTicket.tickedId())
+                    .numbersFromUser(numbersFromUser)
+                    .message("success")
+                    .build();
         }
-        return "failed";
+        return InputNumberResultDto.builder().message("failed").build();
     }
 
-    private  List<Integer> filterAllNumbersInOfRange(Set<Integer> numbersFromUser) {
-        return numbersFromUser.stream()
-                .filter(number -> number >= 1)
-                .filter(number -> number <= 99)
+    public List<TicketDto> userNumbers(LocalDateTime date) {
+        List<Ticket> allTicketsByDrawDate = repository.findTicketByDrawDate(date);
+        return allTicketsByDrawDate.stream()
+                .map(TicketMapper::mapFromTicket)
                 .toList();
+
+
     }
 
-    private  boolean areAllNumbersInRange(List<Integer> filteredNumbers){
-        return filteredNumbers.size() == 6;
-    }
+
 }
