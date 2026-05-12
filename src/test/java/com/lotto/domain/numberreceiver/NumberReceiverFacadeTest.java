@@ -70,7 +70,7 @@ public class NumberReceiverFacadeTest {
         InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         //then
         InputNumberResultDto expectedResponse = new InputNumberResultDto(null,ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
-        assertThat(result.message()).isEqualTo("YOU SHOULD GIVE 6 NUMBERS");
+        assertThat(result).isEqualTo(expectedResponse);
     }
 
     @Test
