@@ -4,11 +4,13 @@ import com.lotto.domain.numberreceiver.dto.InputNumberResultDto;
 import com.lotto.domain.numberreceiver.dto.TicketDto;
 import lombok.AllArgsConstructor;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.lotto.domain.numberreceiver.ValidationResult.INPUT_SUCCESS;
 
 /*
  *
@@ -20,37 +22,70 @@ import java.util.UUID;
  * klient dostaje informacje o swoim unikalnum indetyfikatorzee losowania
  *
  * */
+
 @AllArgsConstructor
 class NumberReceiverFacade {
 
-    private final NumberValidator validator;
-    private final NumberReceiverRepository repository;
-    private Clock clock;
+    private final NumberValidator numberValidator;
+    private final TicketRepository ticketRepository;
+    private final DrawDateGenerator drawDateGenerator;
+    private final HashGenerable hashGenerator;
+
 
     public InputNumberResultDto inputNumber(Set<Integer> numbersFromUser) {
-        boolean areAllNumbersInRange = validator.areAllNumbersInRange(numbersFromUser);
-        if (areAllNumbersInRange) {
-            String tickedId = UUID.randomUUID().toString();
-            LocalDateTime drawDate = LocalDateTime.now(clock);
-            Ticket savedTicket = repository.save(new Ticket(tickedId, drawDate, numbersFromUser));
-            return InputNumberResultDto.builder()
-                    .drawDate(savedTicket.drawDate())
-                    .ticketId(savedTicket.tickedId())
-                    .numbersFromUser(numbersFromUser)
-                    .message("success")
-                    .build();
+        List<ValidationResult> validationResultList = numberValidator.validate(numbersFromUser);
+        if (!validationResultList.isEmpty()) {
+            String resultMessage = numberValidator.createResultMessage();
+            return new InputNumberResultDto(null, resultMessage);
         }
-        return InputNumberResultDto.builder().message("failed").build();
+        LocalDateTime drawDate = drawDateGenerator.getNextDrawDate();
+        String hash = hashGenerator.getHash();
+        TicketDto generatedTicket = TicketDto.builder()
+                .hash(hash)
+                .numbers(numbersFromUser)
+                .drawDate(drawDate)
+                .build();
+
+
+        Ticket savedTicket = Ticket.builder()
+                .hash(hash)
+                .numbers(generatedTicket.numbers())
+                .drawDate(generatedTicket.drawDate())
+                .build();
+        ticketRepository.save(savedTicket);
+        return new InputNumberResultDto(generatedTicket, INPUT_SUCCESS.info);
+
     }
 
-    public List<TicketDto> userNumbers(LocalDateTime date) {
-        List<Ticket> allTicketsByDrawDate = repository.findTicketByDrawDate(date);
-        return allTicketsByDrawDate.stream()
-                .map(TicketMapper::mapFromTicket)
-                .toList();
+    public List<TicketDto> retrieveAllTicketsByNextDrawDate(LocalDateTime date) {
+        LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
+        if (date.isAfter(nextDrawDate)) {
+            return Collections.emptyList();
+        }
+        return ticketRepository.findAllTicketByDrawDate(date)
+                .stream()
+                .filter(ticket -> ticket.drawDate().isEqual(date))
+                .map(ticket -> TicketDto.builder()
+                        .hash(ticket.hash())
+                        .numbers(ticket.numbers())
+                        .drawDate(ticket.drawDate())
+                        .build())
+                .collect(Collectors.toList());
 
 
     }
 
+    public LocalDateTime retrieveNextDrawDate() {
+        return drawDateGenerator.getNextDrawDate();
+    }
+
+    public TicketDto findByHash(String hash){
+        Ticket ticket = ticketRepository.findByHash(hash);
+        return TicketDto.builder()
+                .hash(ticket.hash())
+                .numbers(ticket.numbers())
+                .drawDate(ticket.drawDate())
+                .build();
+    }
 
 }

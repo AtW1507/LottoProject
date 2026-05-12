@@ -1,8 +1,10 @@
 package com.lotto.domain.numberreceiver;
 //encja do bazy
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.Set;
-
-record Ticket(String tickedId, LocalDateTime drawDate, Set<Integer> numbersFromUser) {
+@Builder
+record Ticket(String hash, LocalDateTime drawDate, Set<Integer> numbers) {
 }
