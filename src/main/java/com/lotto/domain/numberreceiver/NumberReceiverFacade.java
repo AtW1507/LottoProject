@@ -71,8 +71,10 @@ public class NumberReceiverFacade {
                         .drawDate(ticket.drawDate())
                         .build())
                 .collect(Collectors.toList());
-
-
+    }
+    public List<TicketDto> retrieveAllTicketsByNextDrawDate(){
+        LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
+        return retrieveAllTicketsByNextDrawDate(nextDrawDate);
     }
 
     public LocalDateTime retrieveNextDrawDate() {
