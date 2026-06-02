@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.as;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -133,7 +133,7 @@ class ResultCheckerFacadeTest {
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerConfiguration().createForTest(winningNumberGeneratorFacade, numberReceiverFacade, playerRepository);
         resultCheckerFacade.generatedWinners();
         //when
-        ResultDto resultDto = resultCheckerFacade.findBYHash(hash);
+        ResultDto resultDto = resultCheckerFacade.findByHash(hash);
         //then
         ResultDto expectedResult = ResultDto.builder()
                 .hash(hash)
