@@ -28,7 +28,7 @@ class RandomGenerator implements RandomNumberGenerable {
 
     private int generateRandom(){
         Random random = new SecureRandom();
-        return random.nextInt(RANDOM_NUMBER_BOUND);
+        return random.nextInt(RANDOM_NUMBER_BOUND) +1;
     }
 
 
