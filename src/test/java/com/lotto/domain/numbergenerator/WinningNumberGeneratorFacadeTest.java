@@ -20,11 +20,12 @@ class WinningNumberGeneratorFacadeTest {
 
     private final WinningNumbersRepository winningNumbersRepository = new WinningNumberRepositoryTestImpl();
     NumberReceiverFacade numberReceiverFacade = mock(NumberReceiverFacade.class);
+    private final OneRandomNumberFetcher fetcher = new SecureRandomOneNumberFetcher();
 
     @Test
     public void should_return_set_of_required_size(){
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new RandomGenerator(fetcher);
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
         WinningNumberGeneratorFacade numberGenerator = new NumberGeneratorConfiguration().createdForTest(generator,winningNumbersRepository,numberReceiverFacade);
         //when
@@ -35,7 +36,7 @@ class WinningNumberGeneratorFacadeTest {
     @Test
     public void should_return_set_of_require_size_within_required_range(){
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new RandomGenerator(fetcher);
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
         WinningNumberGeneratorFacade numberGenerator = new NumberGeneratorConfiguration().createdForTest(generator,winningNumbersRepository,numberReceiverFacade);
         //when
@@ -61,7 +62,7 @@ class WinningNumberGeneratorFacadeTest {
     @Test
     public void should_return_collection_of_unique_values(){
         //given
-        RandomNumberGenerable generator = new RandomGenerator();
+        RandomNumberGenerable generator = new RandomGenerator(fetcher);
         when(numberReceiverFacade.retrieveNextDrawDate()).thenReturn(LocalDateTime.now());
         WinningNumberGeneratorFacade numberGenerator = new NumberGeneratorConfiguration().createdForTest(generator,winningNumbersRepository,numberReceiverFacade);
         //when

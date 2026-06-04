@@ -1,22 +1,25 @@
 package com.lotto.domain.numbergenerator;
 
+import com.lotto.domain.numbergenerator.dto.OneRandomNumberResponseDto;
+import lombok.AllArgsConstructor;
+
 import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
+@AllArgsConstructor
 class RandomGenerator implements RandomNumberGenerable {
 
     private final int LOWER_BAND = 1;
     private final int UPPER_BAND = 99;
 
-    private final int RANDOM_NUMBER_BOUND = (UPPER_BAND - LOWER_BAND) + 1;
-
+    private final  OneRandomNumberFetcher client;
 
     public Set<Integer> generateSixRandomNumbers() {
         Set<Integer> winningNumber = new HashSet<>();
         while (isSixNumbers(winningNumber)){
-            int randomNumber = generateRandom();
+            OneRandomNumberResponseDto randomNumberResponseDto = client.retrieveOneRandomNumber(LOWER_BAND,UPPER_BAND);
+            int randomNumber = randomNumberResponseDto.number();
             winningNumber.add(randomNumber);
         }
         return winningNumber;
@@ -26,10 +29,7 @@ class RandomGenerator implements RandomNumberGenerable {
         return winningNumber.size() < 6;
     }
 
-    private int generateRandom(){
-        Random random = new SecureRandom();
-        return random.nextInt(RANDOM_NUMBER_BOUND) +1;
-    }
+
 
 
 }
