@@ -3,9 +3,7 @@ package com.lotto.domain.numbergenerator;
 import com.lotto.domain.numbergenerator.dto.OneRandomNumberResponseDto;
 import lombok.AllArgsConstructor;
 
-import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 @AllArgsConstructor
 class RandomGenerator implements RandomNumberGenerable {
