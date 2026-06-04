@@ -39,7 +39,7 @@ public class ResultCheckerFacade {
                 .message("Winners succeeded to retrieve")
                 .build();
     }
-    public ResultDto findBYHash(String hash){
+    public ResultDto findByHash(String hash){
         Player player = playerRepository.findById(hash).orElseThrow(()-> new RuntimeException("Not found"));
         return  ResultDto.builder()
                 .hash(hash)
