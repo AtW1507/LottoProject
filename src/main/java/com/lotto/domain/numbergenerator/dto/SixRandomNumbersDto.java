@@ -2,8 +2,7 @@ package com.lotto.domain.numbergenerator.dto;
 
 import lombok.Builder;
 
+import java.util.Set;
 @Builder
-public record OneRandomNumberResponseDto(
-        int number
-) {
+public record SixRandomNumbersDto(Set<Integer> numbers) {
 }
