@@ -1,8 +1,7 @@
-package pl.lotto;
+package com.lotto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.lotto.LottoSpringBootApplication;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -50,6 +49,9 @@ public class BaseIntegrationTest {
     @DynamicPropertySource
     public static void propertyOverride(DynamicPropertyRegistry registry){
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+        registry.add("lotto.number-generator.http.client.config.port", ()-> wireMockServer.getPort());
+        registry.add("lotto.number-generator.http.client.config.uri", ()-> WIRE_MOCK_HOST);
+
     }
 
 }
