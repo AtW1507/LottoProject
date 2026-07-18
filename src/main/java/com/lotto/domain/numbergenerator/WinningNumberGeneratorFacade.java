@@ -18,16 +18,18 @@ public class WinningNumberGeneratorFacade {
     private final WinningNumbersGeneratorFacadeConfigurationProperties properties;
 
     public WinningNumbersDto generateWinningNumbers() {
-//        LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
+        LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
         SixRandomNumbersDto dto = randomGenerable.generateSixRandomNumbers(properties.count(), properties.lowerBand(), properties.upperBand());
         Set<Integer> winningNumbers = dto.numbers();
         winningNumberValidator.validate(winningNumbers);
         winningNumbersRepository.save(WinningNumbers.builder()
                 .winningNumbers(winningNumbers)
-                .drawDate(LocalDateTime.now())
+                .drawDate(nextDrawDate)
                 .build());
         return WinningNumbersDto.builder()
-                .winningNumbers(winningNumbers).build();
+                .winningNumbers(winningNumbers)
+                .date(nextDrawDate)
+                .build();
 
     }
 

@@ -6,11 +6,13 @@ spring:
 lotto:
   number-generator:
     facade:
-      count: 25
+      count: 15
       lower-band: 1
       upper-band: 99
     http:
       client:
         config:
           uri: https://api.rand.by
-          port: 80
+          port: 443
+          connectionTimeout: 1000
+          readTimeout: 1000

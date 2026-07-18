@@ -14,8 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,7 +33,7 @@ class RandomNumberGeneratorRestTemplate implements RandomNumberGenerable {
         HttpHeaders headers = new HttpHeaders();
         final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
         try {
-            final ResponseEntity<List<Integer>> response = makeGetRequest(count, lowerBand, upperBand, requestEntity);
+            final ResponseEntity<SixRandomNumbersDto> response = makeGetRequest(count, lowerBand, upperBand, requestEntity);
             Set<Integer> sixDistinctNumbers = getSixRandomDistinctNumbers(response);
             if (sixDistinctNumbers.size() != 6) {
                 log.error("Set is less than: {} Have to request one more time", count);
@@ -50,36 +48,38 @@ class RandomNumberGeneratorRestTemplate implements RandomNumberGenerable {
         }
     }
 
-    private ResponseEntity<List<Integer>> makeGetRequest(int count, int lowerBand, int upperBand, HttpEntity<HttpHeaders> requestEntity) {
+    private ResponseEntity<SixRandomNumbersDto> makeGetRequest(int count, int lowerBand, int upperBand, HttpEntity<HttpHeaders> requestEntity) {
         final String url = UriComponentsBuilder.fromHttpUrl(getUrlForService("/v1/integer"))
                 .queryParam("min", lowerBand)
                 .queryParam("max", upperBand)
                 .queryParam("count", count)
                 .toUriString();
-        ResponseEntity<List<Integer>> response = restTemplate.exchange(
+        return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 requestEntity,
-                new ParameterizedTypeReference<>(){
-
-                });
-        return response;
+                new ParameterizedTypeReference<SixRandomNumbersDto>() {}
+        );
     }
 
-    private Set<Integer> getSixRandomDistinctNumbers(ResponseEntity<List<Integer>> response) {
-        List<Integer> numbers = response.getBody();
-        if(numbers == null){
+    private Set<Integer> getSixRandomDistinctNumbers(ResponseEntity<SixRandomNumbersDto> response) {
+        SixRandomNumbersDto body = response.getBody();
+        if (body == null) {
             log.error("Response Body was null returning empty collection");
             return Collections.emptySet();
         }
         log.info("Success Response Body Returned: " + response);
-        Set<Integer> distinctNumbers = new HashSet<>(numbers);
-        return distinctNumbers.stream()
+
+        return body.numbers().stream()
                 .limit(6)
                 .collect(Collectors.toSet());
     }
 
-    private String getUrlForService(String service){
-        return  uri + ":" + port + service;
+    private String getUrlForService(String service) {
+        if (port == 80 || port == 443) {
+            return uri + service;
+
+        }
+        return uri + ":" + port + service;
     }
 }

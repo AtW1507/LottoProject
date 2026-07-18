@@ -30,23 +30,23 @@ class NumberGeneratorConfiguration {
         };
     }
 
-    @Bean
-    NumberReceiverFacade numberReceiverFacade(){
-        return new NumberReceiverFacade(null,null,null,null);
-    }
+//    @Bean
+//    NumberReceiverFacade numberReceiverFacade(){
+//        return new NumberReceiverFacade(null,null,null,null);
+//    }
 
     @Bean
-    WinningNumberGeneratorFacade winningNumberGeneratorFacade(WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade, RandomNumberGenerable randomNumberGenerator, WinningNumbersGeneratorFacadeConfigurationProperties properties ){
+    WinningNumberGeneratorFacade winningNumbersGeneratorFacade(WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade, RandomNumberGenerable randomNumberGenerator, WinningNumbersGeneratorFacadeConfigurationProperties properties) {
         WinningNumberValidator winningNumberValidator = new WinningNumberValidator();
-        return new WinningNumberGeneratorFacade(numberReceiverFacade, winningNumberValidator, randomNumberGenerator, winningNumbersRepository,  properties);
-
+        return new WinningNumberGeneratorFacade(numberReceiverFacade, winningNumberValidator, randomNumberGenerator, winningNumbersRepository, properties);
     }
-    WinningNumberGeneratorFacade createdForTest(RandomNumberGenerable generator, WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade){
+
+    WinningNumberGeneratorFacade createForTest(RandomNumberGenerable generator, WinningNumbersRepository winningNumbersRepository, NumberReceiverFacade numberReceiverFacade) {
         WinningNumbersGeneratorFacadeConfigurationProperties properties = WinningNumbersGeneratorFacadeConfigurationProperties.builder()
-                .count(6)
                 .upperBand(99)
                 .lowerBand(1)
+                .count(6)
                 .build();
-        return winningNumberGeneratorFacade(winningNumbersRepository, numberReceiverFacade,generator, properties);
+        return winningNumbersGeneratorFacade(winningNumbersRepository, numberReceiverFacade, generator, properties);
     }
 }

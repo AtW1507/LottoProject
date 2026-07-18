@@ -1,13 +1,17 @@
 package com.lotto.feature;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.lotto.domain.numbergenerator.RandomNumberGenerable;
 import com.lotto.domain.numbergenerator.WinningNumberGeneratorFacade;
-import com.lotto.domain.numbergenerator.dto.WinningNumbersDto;
+import com.lotto.domain.numbergenerator.WinningNumbersNotFoundException;
 import org.junit.jupiter.api.Test;
 import com.lotto.BaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import static org.awaitility.Awaitility.await;
 
 class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
 
@@ -23,12 +27,30 @@ class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
                         .withBody("""
-                                [1, 2, 3, 4, 5, 6, 7, 8, 84, 56, 86, 83, 31, 53, 93]""".trim()
+                                {
+                                    "items": [1, 2, 3, 4, 5, 6, 7, 8, 84, 56, 86, 83, 31, 53, 93]
+                                }""".trim()
                         )));
-        //when
-        WinningNumbersDto winningNumbersDto = winningNumberGeneratorFacade.generateWinningNumbers();
-        System.out.println(winningNumbersDto);
+
 //    step 2: system fetched winning numbers for draw date: 19.11.2022 12:00
+        //given
+        LocalDateTime drawDate = LocalDateTime.of(2026, 7, 18, 12, 0, 0);
+
+        //when
+        await()
+                .atMost(Duration.ofSeconds(20))
+                .pollInterval(Duration.ofSeconds(1))
+                .until(() -> {
+                            try {
+                               return !winningNumberGeneratorFacade.retrieveWinningNumberByDate(drawDate).getWinningNumbers().isEmpty();
+                            } catch (WinningNumbersNotFoundException e) {
+                                return false;
+                            }
+                        }
+
+                );
+        //then
+
 //    step 3: user made POST /inputNumbers with 6 numbers (1, 2, 3, 4, 5, 6) at 16-11-2022 10:00 and system returned OK(200) with message: “success” and Ticket (DrawDate:19.11.2022 12:00 (Saturday), TicketId: sampleTicketId)
 //    step 4: 3 days and 1 minute passed, and it is 1 minute after the draw date (19.11.2022 12:01)
 //    step 5: system generated result for TicketId: sampleTicketId with draw date 19.11.2022 12:00, and saved it with 6 hits
