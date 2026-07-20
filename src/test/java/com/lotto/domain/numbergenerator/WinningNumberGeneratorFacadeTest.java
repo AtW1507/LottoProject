@@ -78,7 +78,7 @@ class WinningNumberGeneratorFacadeTest {
         String id = UUID.randomUUID().toString();
         WinningNumbers winningNumbers = WinningNumbers.builder()
                 .id(id)
-                .drawDate(drawDate)
+                .date(drawDate)
                 .winningNumbers(generatedNumbers)
                 .build();
         winningNumbersRepository.save(winningNumbers);
@@ -114,7 +114,7 @@ class WinningNumberGeneratorFacadeTest {
         String id = UUID.randomUUID().toString();
         WinningNumbers winningNumbers = WinningNumbers.builder()
                 .id(id)
-                .drawDate(drawDate)
+                .date(drawDate)
                 .winningNumbers(generatedWinningNumbers)
                 .build();
         winningNumbersRepository.save(winningNumbers);

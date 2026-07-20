@@ -22,13 +22,14 @@ public class WinningNumberGeneratorFacade {
         SixRandomNumbersDto dto = randomGenerable.generateSixRandomNumbers(properties.count(), properties.lowerBand(), properties.upperBand());
         Set<Integer> winningNumbers = dto.numbers();
         winningNumberValidator.validate(winningNumbers);
-        winningNumbersRepository.save(WinningNumbers.builder()
-                .winningNumbers(winningNumbers)
-                .drawDate(nextDrawDate)
-                .build());
-        return WinningNumbersDto.builder()
+        WinningNumbers winningNumbersDocument = WinningNumbers.builder()
                 .winningNumbers(winningNumbers)
                 .date(nextDrawDate)
+                .build();
+        WinningNumbers save = winningNumbersRepository.save(winningNumbersDocument);
+        return WinningNumbersDto.builder()
+                .winningNumbers(winningNumbers)
+                .date(save.date())
                 .build();
 
     }
@@ -38,7 +39,7 @@ public class WinningNumberGeneratorFacade {
                 .orElseThrow(() -> new WinningNumbersNotFoundException("Not Found"));
         return WinningNumbersDto.builder()
                 .winningNumbers(numbersByDate.winningNumbers())
-                .date(numbersByDate.drawDate())
+                .date(numbersByDate.date())
                 .build();
     }
     public boolean areWinningNumbersGeneratedByDate() {
