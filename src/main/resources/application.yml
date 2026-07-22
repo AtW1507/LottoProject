@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/lotto-web
+  main:
+    allow-bean-definition-overriding: true
+
+lotto:
+  number-generator:
+    lotteryRunOccurrence: "0 0 12  * * 6"
+    facade:
+      count: 15
+      lower-band: 1
+      upper-band: 99
+    http:
+      client:
+        config:
+          uri: https://api.rand.by
+          port: 443
+          connectionTimeout: 1000
+          readTimeout: 1000

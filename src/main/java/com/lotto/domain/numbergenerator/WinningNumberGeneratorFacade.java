@@ -1,5 +1,6 @@
 package com.lotto.domain.numbergenerator;
 
+import com.lotto.domain.numbergenerator.dto.SixRandomNumbersDto;
 import com.lotto.domain.numbergenerator.dto.WinningNumbersDto;
 import com.lotto.domain.numberreceiver.NumberReceiverFacade;
 import lombok.AllArgsConstructor;
@@ -12,19 +13,24 @@ public class WinningNumberGeneratorFacade {
 
     private final NumberReceiverFacade numberReceiverFacade;
     private final WinningNumberValidator winningNumberValidator;
-    private final RandomNumberGenerable winningNumberGenerator;
+    private final RandomNumberGenerable randomGenerable;
     private final WinningNumbersRepository winningNumbersRepository;
+    private final WinningNumbersGeneratorFacadeConfigurationProperties properties;
 
     public WinningNumbersDto generateWinningNumbers() {
         LocalDateTime nextDrawDate = numberReceiverFacade.retrieveNextDrawDate();
-        Set<Integer> winningNumbers = winningNumberGenerator.generateSixRandomNumbers();
+        SixRandomNumbersDto dto = randomGenerable.generateSixRandomNumbers(properties.count(), properties.lowerBand(), properties.upperBand());
+        Set<Integer> winningNumbers = dto.numbers();
         winningNumberValidator.validate(winningNumbers);
-        winningNumbersRepository.save(WinningNumbers.builder()
+        WinningNumbers winningNumbersDocument = WinningNumbers.builder()
                 .winningNumbers(winningNumbers)
-                .drawDate(nextDrawDate)
-                .build());
+                .date(nextDrawDate)
+                .build();
+        WinningNumbers save = winningNumbersRepository.save(winningNumbersDocument);
         return WinningNumbersDto.builder()
-                .winningNumbers(winningNumbers).build();
+                .winningNumbers(winningNumbers)
+                .date(save.date())
+                .build();
 
     }
 
@@ -33,7 +39,7 @@ public class WinningNumberGeneratorFacade {
                 .orElseThrow(() -> new WinningNumbersNotFoundException("Not Found"));
         return WinningNumbersDto.builder()
                 .winningNumbers(numbersByDate.winningNumbers())
-                .date(numbersByDate.drawDate())
+                .date(numbersByDate.date())
                 .build();
     }
     public boolean areWinningNumbersGeneratedByDate() {

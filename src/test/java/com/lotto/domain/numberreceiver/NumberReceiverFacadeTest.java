@@ -30,7 +30,7 @@ public class NumberReceiverFacadeTest {
     public void should_return_success_when_user_gave_six_numbers() {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
         DrawDateGenerator drawDateGenerator = new DrawDateGenerator(clock);
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
@@ -51,7 +51,7 @@ public class NumberReceiverFacadeTest {
     public void should_return_failed_message_when_user_gave_at_least_one_number_out_of_range_of_1_to_99() {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 600);
         //when
         InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
@@ -64,7 +64,7 @@ public class NumberReceiverFacadeTest {
     public void should_return_failed_message_when_user_gave_less_than_six_numbers() {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5);
         //when
         InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
@@ -77,7 +77,7 @@ public class NumberReceiverFacadeTest {
     public void should_return_failed_message_when_user_gave_more_than_six_numbers() {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6, 10);
         //when
         InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
@@ -90,7 +90,7 @@ public class NumberReceiverFacadeTest {
     public void should_return_save_to_database_when_user_gave_six_numbers() {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
         //when
         InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
@@ -108,7 +108,7 @@ public class NumberReceiverFacadeTest {
         //given
         HashGenerable hashGenerator = new HashGeneratorTestImpl();
         Clock clock = Clock.fixed(LocalDateTime.of(2026,5,1,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator,clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         //when
         LocalDateTime drawDate = numberReceiverFacade.retrieveNextDrawDate();
         //then
@@ -119,7 +119,7 @@ public class NumberReceiverFacadeTest {
         //given
         Clock clock = Clock.fixed(LocalDateTime.of(2026, 5,6,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
         Set<Integer> numberFromUser = Set.of(1,2,3,4,5,6);
 
         //when
@@ -134,7 +134,7 @@ public class NumberReceiverFacadeTest {
         //given
         Clock clock = Clock.fixed(LocalDateTime.of(2026, 5, 6, 14, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
         Set<Integer> numberFromUser = Set.of(1, 2, 3, 4, 5, 6);
 
         //when
@@ -149,7 +149,7 @@ public class NumberReceiverFacadeTest {
         //given
         Clock clock = Clock.fixed(LocalDateTime.of(2026, 5, 6, 14, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         HashGenerable hashGenerator = new HashGenerator();
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
         LocalDateTime drawDate = LocalDateTime.now(clock);
 
         //when
@@ -165,7 +165,7 @@ public class NumberReceiverFacadeTest {
         Instant fixedInstant = LocalDateTime.of(2026, 5, 6, 12, 0, 0).toInstant(ZoneOffset.UTC);
         ZoneId zone = ZoneId.of("Europe/London");
         AdjustableClock clock = new AdjustableClock(zone, fixedInstant);
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
         InputNumberResultDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         clock.plusDays(1);
         InputNumberResultDto numberResultDto1 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
@@ -188,7 +188,7 @@ public class NumberReceiverFacadeTest {
         //given
         HashGenerable hashGenerator = new HashGenerator();
         Clock clock = Clock.fixed(LocalDateTime.of(2026,5,6,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().createForTest(hashGenerator, clock, ticketRepository);
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
         InputNumberResultDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         LocalDateTime drawDate = numberResultDto.ticketDto().drawDate();
 
