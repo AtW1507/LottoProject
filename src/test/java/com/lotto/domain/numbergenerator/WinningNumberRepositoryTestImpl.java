@@ -26,11 +26,7 @@ class WinningNumberRepositoryTestImpl implements WinningNumbersRepository {
         winningNumbersBaseTest.get(nextDrawDate);
         return true;
     }
-//    @Override
-//    public WinningNumbers save(WinningNumbers winningNumbers){
-//        return winningNumbersBaseTest.put(winningNumbers.date(), winningNumbers);
 
-//    }
 
     @Override
     public <S extends WinningNumbers> S save(S entity) {
