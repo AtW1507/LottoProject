@@ -2,7 +2,7 @@ package com.lotto.domain.numberreceiver;
 
 
 import com.lotto.domain.AdjustableClock;
-import com.lotto.domain.numberreceiver.dto.InputNumberResultDto;
+import com.lotto.domain.numberreceiver.dto.NumberReceiverResponseDto;
 import com.lotto.domain.numberreceiver.dto.TicketDto;
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +41,9 @@ public class NumberReceiverFacadeTest {
                 .drawDate(nextDrawDate)
                 .build();
         //when
-        InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
+        NumberReceiverResponseDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         //then
-        InputNumberResultDto expectedResponse = new InputNumberResultDto(generatedTicket, ValidationResult.INPUT_SUCCESS.info);
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(generatedTicket, ValidationResult.INPUT_SUCCESS.info);
         assertThat(result).isEqualTo(expectedResponse);
     }
 
@@ -54,9 +54,9 @@ public class NumberReceiverFacadeTest {
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 600);
         //when
-        InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
+        NumberReceiverResponseDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         //then
-        InputNumberResultDto expectedResponse = new InputNumberResultDto(null, ValidationResult.NOT_IN_RANGE.info);
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null, ValidationResult.NOT_IN_RANGE.info);
         assertThat(result).isEqualTo(expectedResponse);
     }
 
@@ -67,9 +67,9 @@ public class NumberReceiverFacadeTest {
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5);
         //when
-        InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
+        NumberReceiverResponseDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         //then
-        InputNumberResultDto expectedResponse = new InputNumberResultDto(null,ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null,ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
         assertThat(result).isEqualTo(expectedResponse);
     }
 
@@ -80,9 +80,9 @@ public class NumberReceiverFacadeTest {
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6, 10);
         //when
-        InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
+        NumberReceiverResponseDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         //then
-        InputNumberResultDto expectedResponse = new InputNumberResultDto(null,ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
+        NumberReceiverResponseDto expectedResponse = new NumberReceiverResponseDto(null,ValidationResult.NOT_SIX_NUMBERS_GIVEN.info);
         assertThat(result).isEqualTo(expectedResponse);
     }
 
@@ -93,7 +93,7 @@ public class NumberReceiverFacadeTest {
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator,clock, ticketRepository);
         Set<Integer> numbersFromUser = Set.of(1, 2, 3, 4, 5, 6);
         //when
-        InputNumberResultDto result = numberReceiverFacade.inputNumber(numbersFromUser);
+        NumberReceiverResponseDto result = numberReceiverFacade.inputNumber(numbersFromUser);
         LocalDateTime dateTime = result.ticketDto().drawDate();
         String hash = result.ticketDto().hash();
         List<TicketDto> ticketDtos = numberReceiverFacade.retrieveAllTicketsByNextDrawDate(dateTime);
@@ -166,13 +166,13 @@ public class NumberReceiverFacadeTest {
         ZoneId zone = ZoneId.of("Europe/London");
         AdjustableClock clock = new AdjustableClock(zone, fixedInstant);
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
-        InputNumberResultDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
+        NumberReceiverResponseDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         clock.plusDays(1);
-        InputNumberResultDto numberResultDto1 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
+        NumberReceiverResponseDto numberResultDto1 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         clock.plusDays(1);
-        InputNumberResultDto numberResultDto2 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
+        NumberReceiverResponseDto numberResultDto2 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         clock.plusDays(1);
-        InputNumberResultDto numberResultDto3 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
+        NumberReceiverResponseDto numberResultDto3 = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         TicketDto ticketDto = numberResultDto.ticketDto();
         TicketDto ticketDto1 = numberResultDto1.ticketDto();
         TicketDto ticketDto2 = numberResultDto2.ticketDto();
@@ -189,7 +189,7 @@ public class NumberReceiverFacadeTest {
         HashGenerable hashGenerator = new HashGenerator();
         Clock clock = Clock.fixed(LocalDateTime.of(2026,5,6,12,0,0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/London"));
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverConfiguration().numberReceiverFacade(hashGenerator, clock, ticketRepository);
-        InputNumberResultDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
+        NumberReceiverResponseDto numberResultDto = numberReceiverFacade.inputNumber(Set.of(1,2,3,4,5,6));
         LocalDateTime drawDate = numberResultDto.ticketDto().drawDate();
 
         //when

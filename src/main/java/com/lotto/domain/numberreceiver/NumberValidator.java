@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 class NumberValidator {
 
-    private static final int MAX_NUMBERS_FROM_USER = 6;
+
     private static final int QUANTITY_OF_NUMBERS_FROM_USER = 6;
     private static final int MINIMAL_NUMBER_FROM_USER = 1;
     private static final int MAXIMAL_NUMBER_FROM_USER = 99;
