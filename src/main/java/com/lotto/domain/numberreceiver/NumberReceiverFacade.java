@@ -1,6 +1,6 @@
 package com.lotto.domain.numberreceiver;
 
-import com.lotto.domain.numberreceiver.dto.InputNumberResultDto;
+import com.lotto.domain.numberreceiver.dto.NumberReceiverResponseDto;
 import com.lotto.domain.numberreceiver.dto.TicketDto;
 import lombok.AllArgsConstructor;
 
@@ -32,11 +32,11 @@ public class NumberReceiverFacade {
     private final HashGenerable hashGenerator;
 
 
-    public InputNumberResultDto inputNumber(Set<Integer> numbersFromUser) {
+    public NumberReceiverResponseDto inputNumber(Set<Integer> numbersFromUser) {
         List<ValidationResult> validationResultList = numberValidator.validate(numbersFromUser);
         if (!validationResultList.isEmpty()) {
             String resultMessage = numberValidator.createResultMessage();
-            return new InputNumberResultDto(null, resultMessage);
+            return new NumberReceiverResponseDto(null, resultMessage);
         }
         LocalDateTime drawDate = drawDateGenerator.getNextDrawDate();
         String hash = hashGenerator.getHash();
@@ -53,7 +53,7 @@ public class NumberReceiverFacade {
                 .drawDate(generatedTicket.drawDate())
                 .build();
         ticketRepository.save(savedTicket);
-        return new InputNumberResultDto(generatedTicket, INPUT_SUCCESS.info);
+        return new NumberReceiverResponseDto(generatedTicket, INPUT_SUCCESS.info);
 
     }
 
