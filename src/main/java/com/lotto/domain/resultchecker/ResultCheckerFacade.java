@@ -22,7 +22,7 @@ public class ResultCheckerFacade {
     PlayerRepository playerRepository;
 
 
-    public PlayerDto generatedWinners() {
+    public PlayerDto generatedResults() {
         List<TicketDto> allTicketsByDate = numberReceiverFacade.retrieveAllTicketsByNextDrawDate();
         List<Ticket> tickets = ResultCheckerMapper.mapFromTicketDto(allTicketsByDate);
         WinningNumbersDto winningNumbersDto = winningNumberGeneratorFacade.generateWinningNumbers();

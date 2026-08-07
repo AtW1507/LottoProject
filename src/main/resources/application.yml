@@ -9,8 +9,11 @@ mvc:
     matching-strategy: ANT_PATH_MATCHER
 
 lotto:
+  result-checker:
+    resultCheckerOccurrence: "0 55 11 * * 6"
   number-generator:
     lotteryRunOccurrence: "0 0 12  * * 6"
+
     facade:
       count: 15
       lower-band: 1

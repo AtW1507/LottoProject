@@ -87,5 +87,8 @@ public class AdjustableClock extends Clock {
     }
 
 
-
+    public void plusMinutes(int minutes) {
+        Duration offset = Duration.ofMinutes(minutes);
+        advanceInTimeBy(offset);
+    }
 }
