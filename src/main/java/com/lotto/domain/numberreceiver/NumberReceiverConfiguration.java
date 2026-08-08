@@ -16,25 +16,6 @@ public class NumberReceiverConfiguration {
 
     @Bean HashGenerable hashGenerable(){return new HashGenerator();}
 
-    @Bean
-    TicketRepository ticketRepository(){
-        return new TicketRepository() {
-            @Override
-            public Ticket save(Ticket ticket) {
-                return null;
-            }
-
-            @Override
-            public Collection<Ticket> findAllTicketByDrawDate(LocalDateTime date) {
-                return List.of();
-            }
-
-            @Override
-            public Ticket findByHash(String hash) {
-                return null;
-            }
-        };
-    }
 
     @Bean
     NumberReceiverFacade numberReceiverFacade(HashGenerable hashGenerator, Clock clock, TicketRepository ticketRepository){

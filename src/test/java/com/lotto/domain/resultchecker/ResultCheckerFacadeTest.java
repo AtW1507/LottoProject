@@ -49,7 +49,7 @@ class ResultCheckerFacadeTest {
         );
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerConfiguration().resultCheckerFacade(winningNumberGeneratorFacade, numberReceiverFacade, playerRepository);
         //when
-        PlayerDto playerDto = resultCheckerFacade.generatedWinners();
+        PlayerDto playerDto = resultCheckerFacade.generatedResults();
         //then
         List<ResultDto> results = playerDto.results();
         ResultDto resultDto = ResultDto.builder()
@@ -86,7 +86,7 @@ class ResultCheckerFacadeTest {
                 .build());
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerConfiguration().resultCheckerFacade(winningNumberGeneratorFacade, numberReceiverFacade, playerRepository);
         //when
-        PlayerDto playerDto = resultCheckerFacade.generatedWinners();
+        PlayerDto playerDto = resultCheckerFacade.generatedResults();
         //then
         String message = playerDto.message();
         assertThat(message).isEqualTo("Winners failed to retrieve");
@@ -100,7 +100,7 @@ class ResultCheckerFacadeTest {
                 .build());
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerConfiguration().resultCheckerFacade(winningNumberGeneratorFacade, numberReceiverFacade, playerRepository);
         //when
-        PlayerDto playerDto = resultCheckerFacade.generatedWinners();
+        PlayerDto playerDto = resultCheckerFacade.generatedResults();
         //then
         String message = playerDto.message();
         assertThat(message).isEqualTo("Winners failed to retrieve");
@@ -131,7 +131,7 @@ class ResultCheckerFacadeTest {
                         .build())
         );
         ResultCheckerFacade resultCheckerFacade = new ResultCheckerConfiguration().resultCheckerFacade(winningNumberGeneratorFacade, numberReceiverFacade, playerRepository);
-        resultCheckerFacade.generatedWinners();
+        resultCheckerFacade.generatedResults();
         //when
         ResultDto resultDto = resultCheckerFacade.findByHash(hash);
         //then

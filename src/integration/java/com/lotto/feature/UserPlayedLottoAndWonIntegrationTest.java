@@ -4,6 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.lotto.domain.numbergenerator.WinningNumberGeneratorFacade;
 import com.lotto.domain.numbergenerator.WinningNumbersNotFoundException;
 import com.lotto.domain.numberreceiver.dto.NumberReceiverResponseDto;
+import com.lotto.domain.resultannouncer.dto.ResultAnnouncerResponseDto;
+import com.lotto.domain.resultchecker.PlayerResultNotFoundException;
+import com.lotto.domain.resultchecker.ResultCheckerFacade;
+import com.lotto.domain.resultchecker.dto.ResultDto;
 import org.junit.jupiter.api.Test;
 import com.lotto.BaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -27,6 +32,8 @@ class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     WinningNumberGeneratorFacade winningNumberGeneratorFacade;
+    @Autowired
+    ResultCheckerFacade resultCheckerFacade;
 
     @Test
     public void should_user_win_and_system_should_generate_winners() throws Exception {
@@ -66,7 +73,7 @@ class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
         ResultActions performPostInputNumbers = mockMvc.perform(post("/inputNumbers")
                 .content("""
                         {
-                        "inputNumbers": [1,2,20,35,50,68]
+                        "inputNumbers": [1, 2, 3, 4, 5, 6]
                         }
                         """.trim()
                 ).contentType(MediaType.APPLICATION_JSON)
@@ -75,11 +82,12 @@ class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
         MvcResult mvcResult = performPostInputNumbers.andExpect(status().isOk()).andReturn();
         String json = mvcResult.getResponse().getContentAsString();
         NumberReceiverResponseDto numberReceiverResponseDto = objectMapper.readValue(json, NumberReceiverResponseDto.class);
+        String hash = numberReceiverResponseDto.ticketDto().hash();
         assertAll(
                 () -> assertThat(numberReceiverResponseDto.ticketDto().drawDate()).isEqualTo(drawDate),
                 () -> assertThat(numberReceiverResponseDto.message()).isEqualTo("SUCCESS"),
-                () -> assertThat(numberReceiverResponseDto.ticketDto().hash()).isNotNull()
-                );
+                () -> assertThat(hash).isNotNull()
+        );
 
 
 //    step 4 : user made GET /results/notExisting and system returned 404(NOT_FOUND) and body with (message: Not found for id: notExistingId and status NOT_FOUND)
@@ -98,9 +106,43 @@ class UserPlayedLottoAndWonIntegrationTest extends BaseIntegrationTest {
                 ));
 
 
-//    step 5: 3 days and 1 minute passed, and it is 1 minute after the draw date (19.11.2022 12:01)
+//    step 5: 3 days and 55 minute passed, and it is 5 minute before draw (19.11.2022 11:55)
+        //given
+        //when
+        //then
+        clock.plusDaysAndMinutes(3, 55);
+
+
 //    step 6: system generated result for TicketId: sampleTicketId with draw date 19.11.2022 12:00, and saved it with 6 hits
-//    step 7: 3 hours passed, and it is 1 minute after announcement time (19.11.2022 15:01)
+        //given
+
+       //when
+        await()
+                .atMost(20, TimeUnit.SECONDS)
+                .pollInterval(Duration.ofSeconds(1))
+                .until(() -> {
+                    try {
+                        ResultDto result = resultCheckerFacade.findByHash(hash);
+                        return !result.numbers().isEmpty();
+                    } catch (PlayerResultNotFoundException exception) {
+                        return false;
+                    }
+                });
+//    step 7: 6 minutes passed and it is 1 minute after the draw (19.11.2022 12:01)
+        clock.plusMinutes(6);
+
+
 //    step 8: user made GET /results/sampleTicketId and system returned 200 (OK)
+        ResultActions perform = mockMvc.perform(get("/results/" + hash));
+
+        MvcResult mvcResult1 = perform.andExpect(status().isOk()).andReturn();
+        String jsonGetMethod = mvcResult1.getResponse().getContentAsString();
+        ResultAnnouncerResponseDto finalResult = objectMapper.readValue(jsonGetMethod, ResultAnnouncerResponseDto.class);
+        assertAll(
+                () -> assertThat(finalResult.message()).isEqualTo("Congratulations, you won!"),
+                () -> assertThat(finalResult.responseDto().hash()).isEqualTo(hash),
+                () -> assertThat(finalResult.responseDto().hitNumbers()).hasSize(6)
+        );
+
     }
 }
