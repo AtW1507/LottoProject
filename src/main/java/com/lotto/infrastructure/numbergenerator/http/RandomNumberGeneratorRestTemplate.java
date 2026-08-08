@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -60,7 +59,7 @@ class RandomNumberGeneratorRestTemplate implements RandomNumberGenerable {
                 url,
                 HttpMethod.GET,
                 requestEntity,
-                new ParameterizedTypeReference<SixRandomNumbersDto>() {}
+                new ParameterizedTypeReference<>() {}
         );
     }
 
