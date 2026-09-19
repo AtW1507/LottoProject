@@ -4,12 +4,14 @@ import com.lotto.domain.numbergenerator.WinningNumberGeneratorFacade;
 import com.lotto.domain.numbergenerator.dto.WinningNumbersDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 @Log4j2
+@ConditionalOnProperty(name="scheduling.enabled", matchIfMissing = false)
 public class WinningNumberScheduler {
 
     private final WinningNumberGeneratorFacade winningNumberGeneratorFacade;

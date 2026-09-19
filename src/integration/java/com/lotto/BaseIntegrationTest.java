@@ -25,22 +25,22 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 @Testcontainers
 public class BaseIntegrationTest {
 
-    static {
-        System.setProperty("DOCKER_HOST", "tcp://localhost:2375");
-        // Ta linijka wyłącza sprawdzanie certyfikatów TLS, co ułatwia życie na Windowsie
-        System.setProperty("DOCKER_TLS_VERIFY", "0");
-    }
+//    static {
+//        System.setProperty("DOCKER_HOST", "tcp://localhost:2375");
+//        System.setProperty("DOCKER_TLS_VERIFY", "0");
+//    }
 
     public static final String WIRE_MOCK_HOST = "http://localhost";
 
     @Autowired
     public MockMvc mockMvc;
 
+    @Container
+    public static final MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:5.0.15"));
+
     @Autowired
     public AdjustableClock clock;
 
-    @Container
-    public static final MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:5.0.15"));
 
     @Autowired
     public ObjectMapper objectMapper;
