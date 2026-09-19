@@ -113,6 +113,7 @@
     </dependencies>
 
     <build>
+        <finalName>lotto</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -121,9 +122,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <proc>none</proc>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -3,3 +3,5 @@ lotto:
     lotteryRunOccurrence: "*/5 * * * * *"
   result-checker:
     resultCheckerOccurrence: "*/7 * * * * *"
+scheduling:
+  enabled: false

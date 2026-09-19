@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://admin:admin@localhost:27017/lotto-web?authSource=admin
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}?authSource=${MONGO_AUTH_SOURCE}
   main:
     allow-bean-definition-overriding: true
 mvc:
@@ -25,3 +25,5 @@ lotto:
           port: 443
           connectionTimeout: 1000
           readTimeout: 1000
+scheduling:
+  enabled: true
